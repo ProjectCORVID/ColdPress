@@ -1,59 +1,61 @@
 
 
-    mixin = require './non-cold/mixin'
+    {Context} = require 'context'
 
-    MessageReceiver = mixin.define
-      name: 'MessageReceiver'
-      proto:
-        init: (args) ->
-          @methods.set {}
-          @methodCache = {}
+    {WithRoles, Role} = require 'role'
 
-        repo:
-          definers: (name) -> @methodNames[name]
+    class MessageReceiver extends Role
+      initInstance: (args) ->
+        @context.create 'methods', {}
+        @methodCache = {}
 
-          add: (name, definer) ->
-            (@methodNames[name] or= new Set).add definer
+      repo:
+        definers: (name) -> @methodNames[name]
 
-          remove: (name, definer) ->
-            @methodNames[name]?.delete definer
+        add: (name, definer) ->
+          (@methodNames[name] or= new Set).add definer
 
-          methodNames: {}
+        remove: (name, definer) ->
+          @methodNames[name]?.delete definer
 
-        methods: -> @stateBucket 'methods'
+        methodNames: {}
 
-        unfreeze: ->
-          @addMethod method for method in @methods
+      methods: -> @stateBucket 'methods'
 
-        lookupMethod: (methodName) ->
-          methodCache[methodName] or @methods.get()[methodName]
+      unfreeze: ->
+        @addMethod method for method in @methods
 
-        addMethod: (method) ->
-          {name} = method
+      lookupMethod: (methodName) ->
+        methodCache[methodName] or @methods.get()[methodName]
 
-          if @cantInheritMethod name
-            throw new Error "Method name conflict"
+      addMethod: (method) ->
+        {name} = method
 
-          @methods.set @methods.get()[name] = {definer: this, method}
-          @repo.add name, this
+        if @cantInheritMethod name
+          throw new Error "Method name conflict"
 
-          for kid in @children
-            kid.updateMethodCache this, method
+        @methods.set @methods.get()[name] = {definer: this, method}
+        @repo.add name, this
 
-        updateMethodCache: (definer, name, method) ->
-          @methodCache[name] = {definer, method}
-          
-        cantInheritMethod: (name) ->
-          if @lookupMethod name
-            return true
+        for kid in @children
+          kid.updateMethodCache this, method
 
-          if @lookupMethod name
-            return true
+      updateMethodCache: (definer, name, method) ->
+        @methodCache[name] = {definer, method}
+        
+      cantInheritMethod: (name) ->
+        if @lookupMethod name
+          return true
 
-          for definer in @repo.definers name when definer.hasAncestor this
-            return true
+        if @lookupMethod name
+          return true
+
+        for definer in @repo.definers name when definer.hasAncestor this
+          return true
 
     module.exports = MessageReceiver
+
+
 
 # old notes
 

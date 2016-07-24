@@ -19,7 +19,7 @@ reference so that the definer knows who the sender is.
 
     class ColdObjRef
       constructor: ({@referrer, @referred}) ->
-      
+
       createMessage: (methodName, args, sender = @referrer) ->
         new ColdMessage
           sender: sender

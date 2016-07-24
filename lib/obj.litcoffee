@@ -12,16 +12,17 @@ vars, methods and messages to utility objects.
 
 Also, since world state is versioned by the db, so to is object state.
 
-    mixin = require './non-cold/mixin'
+    {WithRoles} = require 'role'
 
     Inheritor = require './inheritor'
     ColdVars = require './var'
     MessageReceiver = require './msg-receiver'
 
-    class ColdObject
+    class ColdObject extends WithRoles
 
-    mixin ColdObject, Inheritor, ColdVars, MessageReciver
+    ColdObject[WithRoles.sym].addRoles Inheritor, ColdVars, MessageReceiver
 
+    ignored:
       addChild: (child) ->
 
       parentMethodCollisions: (parent) ->
