@@ -7,4 +7,4 @@ is a ColdVar
     {Role} = require 'role'
 
     class ColdVar extends Role
-      
+

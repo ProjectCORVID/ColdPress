@@ -7,7 +7,7 @@ have to handle ColdMUD-isms its own way.
 
     class ColdLanguage
       compiler: (code) ->
-        
+
 But of course we prefer the CoffeeScript dialect
 
     class ColdCoffee extends ColdLanguage

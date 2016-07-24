@@ -42,7 +42,7 @@
 
       updateMethodCache: (definer, name, method) ->
         @methodCache[name] = {definer, method}
-        
+
       cantInheritMethod: (name) ->
         if @lookupMethod name
           return true
