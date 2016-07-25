@@ -10,17 +10,15 @@ The DB handles the object lifecycle, including persistence and versioning.
 
       return o
 
-    merge = (objs...) -> Object.assign {}, objs...
-
     accessor = (varName, accessorName = varName) ->
       new ColdMethod
           name: accessorName
-          args: (value) -> {value}
-          fn: ({value}) ->
-            if value
-              @set dict varName, value
+          args: (newValue) -> {newValue, modify: arguments.length isnt 0}
+          fn: ({newValue, modify}) ->
+            if modify
+              @cold.set dict varName, newValue
             else
-              @get 'name'
+              @cold.get varName
 
 
     class ColdDB
@@ -36,10 +34,6 @@ The DB handles the object lifecycle, including persistence and versioning.
 
         sys.addParent root
 
-        coreNameMethod = accessor 'coreName'
-
-        root.addMethod coreNameMethod
-
       snapshot: ->
         snap = Object.assign {}, @current
 
@@ -54,6 +48,7 @@ The DB handles the object lifecycle, including persistence and versioning.
         @addName name, o
 
         @logChanges [ { newObject: o, id: o.id } ]
+
         return o
 
       lookup: (id) ->
