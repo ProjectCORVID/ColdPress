@@ -34,7 +34,10 @@
         if @cantInheritMethod name
           throw new Error "Method name conflict"
 
-        @methods.set @methods.get()[name] = {definer: this, method}
+        method = Object.assign {}, method
+        method.definer = this
+
+        @methods.set @methods.get()[name] = method
         @repo.add name, this
 
         for kid in @children

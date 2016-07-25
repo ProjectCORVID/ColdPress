@@ -1,3 +1,10 @@
+## ColdCoffee
+
+    ColdLang = require './lang'
+
+    ColdCoffee = new ColdLang
+      compiler: (code) ->
+
 ## Method
 
     class ColdMethod
@@ -5,8 +12,7 @@
         { @definer, @name
           @argNames = []
           @code = ""
-          @compiler = ColdCoffee.compiler
+          @compile = ColdCoffee.compiler
+          @fn = @compile @code
         } = info
-
-        @fn = @compiler @code
 
